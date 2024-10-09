@@ -40,14 +40,19 @@
         // Initialisation de la carte mondiale
         var map = L.map('map').setView([20, 0], 2); // Vue initiale sur le monde
 
-        // Ajout des tuiles OpenStreetMap
+        // Ajouter les tuiles OpenStreetMap
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        // Fonction pour charger les observations de champignons
+        // Ajouter une couche IGN Geoportail pour les cartes topographiques
+        L.tileLayer('https://wxs.ign.fr/geoportail/wmts?layer=GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN25TOUR&style=normal&tilematrixset=PM&Service=WMTS&Request=GetTile&Version=1.0.0&FORMAT=image/png&TileMatrix={z}&TileCol={x}&TileRow={y}', {
+            attribution: '© IGN',
+            maxZoom: 18
+        }).addTo(map);
+
+        // Fonction pour charger les observations de champignons depuis iNaturalist
         function loadObservations(taxon_id) {
-            // API iNaturalist pour les observations de champignons
             fetch(`https://api.inaturalist.org/v1/observations?taxon_id=${taxon_id}&place_id=any`)
                 .then(response => response.json())
                 .then(data => {
@@ -97,7 +102,7 @@
             `;
         }
 
-        // Fonction pour charger les données météorologiques (pluviométrie et humidité) via OpenWeatherMap
+        // Fonction pour charger les données météo via OpenWeatherMap
         function loadWeatherData(lat, lon) {
             const apiKey = 'TON_API_KEY_OPENWEATHERMAP'; // Remplace par ta clé API OpenWeatherMap
             fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=minutely,hourly,daily&appid=${apiKey}`)
@@ -127,6 +132,21 @@
                         .openOn(map);
                 })
                 .catch(error => console.error('Erreur lors de la récupération des données de sol :', error));
+        }
+
+        // Fonction pour charger les données des risques naturels via GéoRisques
+        function loadGeoRisks(lat, lon) {
+            fetch(`https://www.georisques.gouv.fr/api/v1/risques?lat=${lat}&lon=${lon}`)
+                .then(response => response.json())
+                .then(data => {
+                    const risks = data.risques || 'Aucun risque détecté';
+                    const risksInfo = `Risques naturels : ${risks}`;
+                    L.popup()
+                        .setLatLng([lat, lon])
+                        .setContent(risksInfo)
+                        .openOn(map);
+                })
+                .catch(error => console.error('Erreur lors de la récupération des données de risques :', error));
         }
 
         // Écouteur d'événement pour le bouton de recherche
