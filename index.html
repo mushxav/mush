@@ -30,7 +30,9 @@
             <option value="47843">Girolle</option>
         </select>
         <button id="search">Chercher</button>
+        <div id="biotope-info"></div>
     </div>
+
     <div id="map"></div>
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
@@ -61,14 +63,49 @@
                 .catch(error => console.error('Erreur lors de la récupération des données :', error));
         }
 
-        // Event listener sur le bouton "Chercher"
+        // Fonction pour obtenir les détails du biotope
+        function getBiotopeDetails(taxon_id) {
+            const biotopeInfo = {
+                48428: { // Morille
+                    trees: "Frêne, Ulmus, Sorbus, Carpinus",
+                    soil: "Basique à légèrement acide",
+                    altitude: "Peu de préférence"
+                },
+                47170: { // Cèpe
+                    trees: "Chêne, Hêtre, Castanea",
+                    soil: "Acide à très acide",
+                    altitude: "< 2000m"
+                },
+                47843: { // Girolle
+                    trees: "Chêne, Castanea, Hêtre",
+                    soil: "Acide à très acide",
+                    altitude: "< 1600m"
+                }
+            };
+            return biotopeInfo[taxon_id] || {};
+        }
+
+        // Mise à jour des informations du biotope
+        function updateBiotopeInfo(taxon_id) {
+            const biotope = getBiotopeDetails(taxon_id);
+            document.getElementById('biotope-info').innerHTML = `
+                <strong>Biotope :</strong><br>
+                Arbres : ${biotope.trees || "Inconnu"}<br>
+                Sol : ${biotope.soil || "Inconnu"}<br>
+                Altitude : ${biotope.altitude || "Inconnu"}
+            `;
+        }
+
+        // Écouteur d'événement pour le bouton de recherche
         document.getElementById('search').addEventListener('click', () => {
             const species = document.getElementById('species').value;
             loadObservations(species);
+            updateBiotopeInfo(species);  // Mise à jour des détails du biotope
         });
 
-        // Chargement initial (Morille par défaut)
+        // Chargement par défaut des observations de Morille
         loadObservations(48428);
+        updateBiotopeInfo(48428);  // Affiche les détails du biotope pour Morille
     </script>
 </body>
 </html>
