@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carte des Champignons Comestibles</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #map { height: 600px; }
+    </style>
+</head>
+<body>
+    <h1>Carte des Champignons Comestibles</h1>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        // Initialisation de la carte
+        var map = L.map('map').setView([46.6034, 1.8883], 5); // Centre sur la France
+
+        // Couche de tuiles OpenStreetMap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Exemple de données pour les champignons comestibles
+        var mushrooms = [
+            {name: "Cèpe de Bordeaux", lat: 44.8378, lon: -0.5792, info: "Favorise les forêts de chênes."}, // Bordeaux
+            {name: "Chanterelle", lat: 47.4784, lon: 0.5549, info: "Pousse dans les sous-bois."}, // Angers
+            {name: "Morille", lat: 47.3738, lon: 5.0047, info: "Recherchée au printemps."}, // Dijon
+            {name: "Girolle", lat: 47.7530, lon: 1.8917, info: "Aime les sols acides."}, // Tours
+            {name: "Lactaire délicieux", lat: 43.6047, lon: 1.4442, info: "Pousse sous les pins."}, // Toulouse
+            {name: "Pied-de-mouton", lat: 45.7832, lon: 4.8357, info: "Souvent trouvé en lisière de forêt."}, // Lyon
+            {name: "Bolet jaune", lat: 46.1617, lon: 6.0913, info: "Se développe dans les forêts."}, // Genève
+            {name: "Trompette de la mort", lat: 48.5680, lon: 7.7521, info: "Pousse dans les zones humides."}, // Strasbourg
+            {name: "Vesse de loup", lat: 48.8584, lon: 2.2941, info: "Fréquent dans les prairies."}, // Paris
+            {name: "Champignon de Paris", lat: 48.8450, lon: 2.3730, info: "Cultivé dans les caves."} // Paris
+        ];
+
+        // Ajout de marqueurs pour chaque type de champignon
+        mushrooms.forEach(function(mushroom) {
+            L.marker([mushroom.lat, mushroom.lon])
+                .addTo(map)
+                .bindPopup(`<b>${mushroom.name}</b><br>${mushroom.info}`);
+        });
+    </script>
+</body>
+</html>
