@@ -73,6 +73,11 @@
                             }
                         } else {
                             console.warn('Observation sans coordonnées:', observation);
+                            if (!observation.location) {
+                                console.warn('Aucune localisation définie');
+                            } else {
+                                console.warn('Localisation trouvée mais manque de latitude ou longitude', observation.location);
+                            }
                         }
                     });
                 } else {
