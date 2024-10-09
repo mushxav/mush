@@ -23,19 +23,23 @@
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
+        // Ajout d'un marqueur statique pour tester
+        L.marker([48.8566, 2.3522]) // Coordonnées de Paris
+            .addTo(map)
+            .bindPopup("Test: Champignon à Paris");
+
         // Récupération des données depuis l'API iNaturalist
         fetch('https://api.inaturalist.org/v1/observations?taxon_id=48428&place_id=any')
             .then(response => {
-                // Vérifie si la réponse est correcte
                 if (!response.ok) {
                     throw new Error('Erreur HTTP ' + response.status);
                 }
                 return response.json();
             })
             .then(data => {
+                console.log(data); // Affiche les données dans la console
                 if (data.results && data.results.length > 0) {
                     data.results.forEach(observation => {
-                        // Vérifie si les coordonnées sont définies
                         if (observation.location && 
                             observation.location.latitude !== undefined && 
                             observation.location.longitude !== undefined) {
@@ -45,7 +49,6 @@
                             const species = observation.taxon ? observation.taxon.name : "Espèce inconnue";
                             const info = `Espèce : ${species}<br>Date : ${observation.observed_on}`;
 
-                            // Ajoute un marqueur pour chaque observation
                             L.marker([lat, lon])
                                 .addTo(map)
                                 .bindPopup(info);
