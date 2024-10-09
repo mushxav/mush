@@ -48,11 +48,15 @@
         fetch('https://api.inaturalist.org/v1/observations?taxon_id=48428&place_id=any')
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+                console.log(data); // Affiche les données dans la console
                 // Vérifie s'il y a des résultats avant de parcourir
                 if (data.results && data.results.length > 0) {
                     data.results.forEach(function(observation) {
-                        if (observation.location) { // Assurez-vous qu'il y a une localisation
+                        // Vérifie si la localisation et les coordonnées sont définies
+                        if (observation.location && 
+                            observation.location.latitude !== undefined && 
+                            observation.location.longitude !== undefined) {
+                            
                             const lat = observation.location.latitude;
                             const lon = observation.location.longitude;
                             const species = observation.taxon ? observation.taxon.name : "Espèce inconnue";
@@ -61,6 +65,8 @@
                             L.marker([lat, lon])
                                 .addTo(map)
                                 .bindPopup(info);
+                        } else {
+                            console.warn('Observation sans coordonnées:', observation);
                         }
                     });
                 } else {
