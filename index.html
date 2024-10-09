@@ -37,7 +37,7 @@
             {name: "Champignon de Paris", lat: 48.8450, lon: 2.3730, info: "Cultivé dans les caves."}
         ];
 
-        // Ajout de marqueurs pour chaque type de champignon comestible
+        // Ajout de marqueurs pour chaque type de champignon
         mushrooms.forEach(function(mushroom) {
             L.marker([mushroom.lat, mushroom.lon])
                 .addTo(map)
@@ -48,22 +48,24 @@
         fetch('https://api.inaturalist.org/v1/observations?taxon_id=48428&place_id=any')
             .then(response => response.json())
             .then(data => {
-                // Affiche les données dans la console pour voir ce que tu as récupéré
                 console.log(data);
-                
-                // Parcourir les résultats et ajouter des marqueurs
-                data.results.forEach(function(observation) {
-                    if (observation.location) { // Assurez-vous qu'il y a une localisation
-                        const lat = observation.location.latitude;
-                        const lon = observation.location.longitude;
-                        const species = observation.taxon ? observation.taxon.name : "Espèce inconnue";
-                        const info = `Espèce : ${species}<br>Date : ${observation.observed_on}`;
+                // Vérifie s'il y a des résultats avant de parcourir
+                if (data.results && data.results.length > 0) {
+                    data.results.forEach(function(observation) {
+                        if (observation.location) { // Assurez-vous qu'il y a une localisation
+                            const lat = observation.location.latitude;
+                            const lon = observation.location.longitude;
+                            const species = observation.taxon ? observation.taxon.name : "Espèce inconnue";
+                            const info = `Espèce : ${species}<br>Date : ${observation.observed_on}`;
 
-                        L.marker([lat, lon])
-                            .addTo(map)
-                            .bindPopup(info);
-                    }
-                });
+                            L.marker([lat, lon])
+                                .addTo(map)
+                                .bindPopup(info);
+                        }
+                    });
+                } else {
+                    console.log('Aucune observation trouvée.');
+                }
             })
             .catch(error => {
                 console.error('Erreur lors de la récupération des données :', error);
