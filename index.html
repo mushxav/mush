@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carte des Champignons Comestibles</title>
+    <title>Carte des Champignons Comestibles en France</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
         #map { height: 600px; }
@@ -25,16 +25,16 @@
 
         // Exemple de données pour les champignons comestibles
         var mushrooms = [
-            {name: "Cèpe de Bordeaux", lat: 44.8378, lon: -0.5792, info: "Favorise les forêts de chênes."}, // Bordeaux
-            {name: "Chanterelle", lat: 47.4784, lon: 0.5549, info: "Pousse dans les sous-bois."}, // Angers
-            {name: "Morille", lat: 47.3738, lon: 5.0047, info: "Recherchée au printemps."}, // Dijon
-            {name: "Girolle", lat: 47.7530, lon: 1.8917, info: "Aime les sols acides."}, // Tours
-            {name: "Lactaire délicieux", lat: 43.6047, lon: 1.4442, info: "Pousse sous les pins."}, // Toulouse
-            {name: "Pied-de-mouton", lat: 45.7832, lon: 4.8357, info: "Souvent trouvé en lisière de forêt."}, // Lyon
-            {name: "Bolet jaune", lat: 46.1617, lon: 6.0913, info: "Se développe dans les forêts."}, // Genève
-            {name: "Trompette de la mort", lat: 48.5680, lon: 7.7521, info: "Pousse dans les zones humides."}, // Strasbourg
-            {name: "Vesse de loup", lat: 48.8584, lon: 2.2941, info: "Fréquent dans les prairies."}, // Paris
-            {name: "Champignon de Paris", lat: 48.8450, lon: 2.3730, info: "Cultivé dans les caves."} // Paris
+            {name: "Cèpe de Bordeaux", lat: 44.8378, lon: -0.5792, info: "Favorise les forêts de chênes."},
+            {name: "Chanterelle", lat: 47.4784, lon: 0.5549, info: "Pousse dans les sous-bois."},
+            {name: "Morille", lat: 47.3738, lon: 5.0047, info: "Recherchée au printemps."},
+            {name: "Girolle", lat: 47.7530, lon: 1.8917, info: "Aime les sols acides."},
+            {name: "Lactaire délicieux", lat: 43.6047, lon: 1.4442, info: "Pousse sous les pins."},
+            {name: "Pied-de-mouton", lat: 45.7832, lon: 4.8357, info: "Souvent trouvé en lisière de forêt."},
+            {name: "Bolet jaune", lat: 46.1617, lon: 6.0913, info: "Se développe dans les forêts."},
+            {name: "Trompette de la mort", lat: 48.5680, lon: 7.7521, info: "Pousse dans les zones humides."},
+            {name: "Vesse de loup", lat: 48.8584, lon: 2.2941, info: "Fréquent dans les prairies."},
+            {name: "Champignon de Paris", lat: 48.8450, lon: 2.3730, info: "Cultivé dans les caves."}
         ];
 
         // Ajout de marqueurs pour chaque type de champignon
@@ -43,6 +43,17 @@
                 .addTo(map)
                 .bindPopup(`<b>${mushroom.name}</b><br>${mushroom.info}`);
         });
+
+        // Code pour récupérer des données depuis l'API iNaturalist
+        fetch('https://api.inaturalist.org/v1/observations?taxon_id=48428&place_id=any')
+            .then(response => response.json())
+            .then(data => {
+                // Exemple : Affiche les données dans la console pour voir ce que tu as récupéré
+                console.log(data);
+            })
+            .catch(error => {
+                console.error('Erreur lors de la récupération des données :', error);
+            });
     </script>
 </body>
 </html>
