@@ -63,22 +63,22 @@
                 .catch(error => console.error('Erreur lors de la récupération des données :', error));
         }
 
-        // Fonction pour obtenir les détails du biotope
+        // Fonction pour obtenir les détails du biotope, y compris le sol
         function getBiotopeDetails(taxon_id) {
             const biotopeInfo = {
                 48428: { // Morille
                     trees: "Frêne, Ulmus, Sorbus, Carpinus",
-                    soil: "Basique à légèrement acide",
+                    soil: "Basique à légèrement acide (pH > 6.5)",
                     altitude: "Peu de préférence"
                 },
                 47170: { // Cèpe
                     trees: "Chêne, Hêtre, Castanea",
-                    soil: "Acide à très acide",
+                    soil: "Acide à très acide (pH < 6.5)",
                     altitude: "< 2000m"
                 },
                 47843: { // Girolle
                     trees: "Chêne, Castanea, Hêtre",
-                    soil: "Acide à très acide",
+                    soil: "Acide à très acide (pH < 6.5)",
                     altitude: "< 1600m"
                 }
             };
