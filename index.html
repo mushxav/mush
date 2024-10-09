@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carte des Champignons Comestibles</title>
+    <title>Carte des Champignons Comestibles en France</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
         #map { height: 600px; }
@@ -25,7 +25,13 @@
 
         // Récupération des données depuis l'API iNaturalist
         fetch('https://api.inaturalist.org/v1/observations?taxon_id=48428&place_id=any')
-            .then(response => response.json())
+            .then(response => {
+                // Vérifie si la réponse est correcte
+                if (!response.ok) {
+                    throw new Error('Erreur HTTP ' + response.status);
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.results && data.results.length > 0) {
                     data.results.forEach(observation => {
@@ -43,6 +49,8 @@
                             L.marker([lat, lon])
                                 .addTo(map)
                                 .bindPopup(info);
+                        } else {
+                            console.warn('Observation sans coordonnées:', observation);
                         }
                     });
                 } else {
