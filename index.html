@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carte interactive de champignons</title>
+    <title>Carte interactive mondiale de champignons</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <style>
         #map {
@@ -37,8 +37,8 @@
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
-        // Initialisation de la carte
-        var map = L.map('map').setView([46.603354, 1.888334], 6); // Centré sur la France
+        // Initialisation de la carte mondiale
+        var map = L.map('map').setView([20, 0], 2); // Vue initiale sur le monde
 
         // Ajout des tuiles OpenStreetMap
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -47,6 +47,7 @@
 
         // Fonction pour charger les observations de champignons
         function loadObservations(taxon_id) {
+            // API iNaturalist pour les observations de champignons
             fetch(`https://api.inaturalist.org/v1/observations?taxon_id=${taxon_id}&place_id=any`)
                 .then(response => response.json())
                 .then(data => {
@@ -63,7 +64,7 @@
                 .catch(error => console.error('Erreur lors de la récupération des données :', error));
         }
 
-        // Fonction pour obtenir les détails du biotope, y compris le sol
+        // Fonction pour obtenir les détails du biotope
         function getBiotopeDetails(taxon_id) {
             const biotopeInfo = {
                 48428: { // Morille
@@ -96,6 +97,38 @@
             `;
         }
 
+        // Fonction pour charger les données météorologiques (pluviométrie et humidité) via OpenWeatherMap
+        function loadWeatherData(lat, lon) {
+            const apiKey = 'TON_API_KEY_OPENWEATHERMAP'; // Remplace par ta clé API OpenWeatherMap
+            fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=minutely,hourly,daily&appid=${apiKey}`)
+                .then(response => response.json())
+                .then(data => {
+                    const humidity = data.current.humidity;
+                    const rain = data.current.rain ? data.current.rain['1h'] : 0;
+                    const weatherInfo = `Humidité : ${humidity}%<br>Précipitations : ${rain} mm/h`;
+                    L.popup()
+                        .setLatLng([lat, lon])
+                        .setContent(weatherInfo)
+                        .openOn(map);
+                })
+                .catch(error => console.error('Erreur lors de la récupération des données météo :', error));
+        }
+
+        // Fonction pour charger les données du sol via SoilGrids
+        function loadSoilData(lat, lon) {
+            fetch(`https://rest.soilgrids.org/soilgrids/v2.0/properties?lon=${lon}&lat=${lat}`)
+                .then(response => response.json())
+                .then(data => {
+                    const ph = data.properties.ph_h2o.M.sl2.mean || 'Inconnu';
+                    const soilInfo = `pH du sol : ${ph}`;
+                    L.popup()
+                        .setLatLng([lat, lon])
+                        .setContent(soilInfo)
+                        .openOn(map);
+                })
+                .catch(error => console.error('Erreur lors de la récupération des données de sol :', error));
+        }
+
         // Écouteur d'événement pour le bouton de recherche
         document.getElementById('search').addEventListener('click', () => {
             const species = document.getElementById('species').value;
@@ -106,6 +139,7 @@
         // Chargement par défaut des observations de Morille
         loadObservations(48428);
         updateBiotopeInfo(48428);  // Affiche les détails du biotope pour Morille
+
     </script>
 </body>
 </html>
