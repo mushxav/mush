@@ -49,6 +49,7 @@
             .then(response => response.json())
             .then(data => {
                 console.log(data); // Affiche les données dans la console
+
                 // Vérifie s'il y a des résultats avant de parcourir
                 if (data.results && data.results.length > 0) {
                     data.results.forEach(function(observation) {
@@ -62,9 +63,14 @@
                             const species = observation.taxon ? observation.taxon.name : "Espèce inconnue";
                             const info = `Espèce : ${species}<br>Date : ${observation.observed_on}`;
 
-                            L.marker([lat, lon])
-                                .addTo(map)
-                                .bindPopup(info);
+                            // Ajoute le marqueur seulement si lat et lon sont valides
+                            if (!isNaN(lat) && !isNaN(lon)) {
+                                L.marker([lat, lon])
+                                    .addTo(map)
+                                    .bindPopup(info);
+                            } else {
+                                console.warn('Coordonnées invalides:', lat, lon);
+                            }
                         } else {
                             console.warn('Observation sans coordonnées:', observation);
                         }
